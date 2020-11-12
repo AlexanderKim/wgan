@@ -101,6 +101,8 @@ class WGAN(pl.LightningModule):
         real, _ = batch
         optimizer = self.optimizers()[optimizer_idx]
 
+        print("optimizer_idx:", optimizer_idx)
+
         if optimizer_idx == 0:
             return self.train_generator(real, optimizer)
         if optimizer_idx == 1:
@@ -109,10 +111,10 @@ class WGAN(pl.LightningModule):
     def configure_optimizers(self):
         optimizer_gen = Adam(params=self.generator.parameters(), lr=0.0002, betas=(0.5, 0.999))
         optimizer_disc = Adam(params=self.discriminator.parameters(), lr=0.0002, betas=(0.5, 0.999))
-        return optimizer_gen, optimizer_disc
+        return [optimizer_gen, optimizer_disc], []
 
     def on_epoch_end(self):
-        noise = self.generator.gen_noize()
+        noise = self.generator.gen_noize(device=self.device)
         fake_pred = self.generator(noise)
         img_grid = torchvision.utils.make_grid(fake_pred)
         self.logger.experiment.add_image('generated_images', img_grid, self.current_epoch)
