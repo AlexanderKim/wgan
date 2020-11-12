@@ -82,7 +82,7 @@ class WGAN(pl.LightningModule):
             fake = self.generator(noise)
             fake_pred = self.discriminator(fake.detach())
 
-            epsilon = torch.rand(len(real), 1, 1, 1, requires_grad=True)
+            epsilon = torch.rand(len(real), 1, 1, 1, requires_grad=True, device=self.device)
             gradient = self.get_gradient(real, fake.detach(), epsilon)
             gradient_penalty = self.gradient_penalty(gradient)
             disc_loss = self.disc_loss(fake_pred, real_pred, gradient_penalty, c_lambda)
