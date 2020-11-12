@@ -99,14 +99,14 @@ class WGAN(pl.LightningModule):
     def training_step(self, batch, batch_idx, optimizer_idx):
 
         real, _ = batch
-        optimizer = self.optimizers()[optimizer_idx]
 
-        print("optimizer_idx:", optimizer_idx)
+        self.train_generator(real, self.optimizers()[0])
+        self.train_discriminator(real, self.optimizers()[1])
 
-        if optimizer_idx == 0:
-            return self.train_generator(real, optimizer)
-        if optimizer_idx == 1:
-            return self.train_discriminator(real, optimizer)
+        # if optimizer_idx == 0:
+        #     return self.train_generator(real, optimizer)
+        # if optimizer_idx == 1:
+        #     return self.train_discriminator(real, optimizer)
 
     def configure_optimizers(self):
         optimizer_gen = Adam(params=self.generator.parameters(), lr=0.0002, betas=(0.5, 0.999))
