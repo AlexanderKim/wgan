@@ -92,7 +92,6 @@ class WGAN(pl.LightningModule):
             self.manual_backward(disc_loss, optimizer, retain_graph=True)
             optimizer.step()
 
-
         self.log_dict({"d_loss": mean_disc_loss})
 
         return mean_disc_loss
@@ -112,7 +111,7 @@ class WGAN(pl.LightningModule):
         optimizer_disc = Adam(params=self.discriminator.parameters(), lr=0.0002, betas=(0.5, 0.999))
         return optimizer_gen, optimizer_disc
 
-    def validation_epoch_end(self, outputs: List[Any]) -> None:
+    def on_epoch_end(self):
         noise = self.generator.gen_noize()
         fake_pred = self.generator(noise)
         img_grid = torchvision.utils.make_grid(fake_pred)
